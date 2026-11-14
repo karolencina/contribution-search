@@ -1,0 +1,34 @@
+# --- Python (api/) ---
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# --- Node / Next.js (web/) ---
+# Lockfiles (package-lock.json) are NOT ignored: they are committed.
+node_modules/
+.next/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+npm-debug.log*
+.eslintcache
+
+# --- Secrets and local config ---
+.env
+.env.*
+!.env.example
+
+# --- Claude Code: per-developer files. settings.json and hooks/ ARE committed. ---
+.claude/settings.local.json
+CLAUDE.local.md
+
+# --- OS / editor ---
+.DS_Store
+.idea/
