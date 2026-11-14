@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Edit(WORKING-AGREEMENT.md)",
+      "Edit(.claude/**)",
+      "Bash(git commit *)",
+      "Bash(git push *)"
+    ],
+    "ask": [
+      "Bash(npm install *)",
+      "Bash(pip install *)",
+      "Edit(api/tests/**)",
+      "Edit(web/**/*.test.ts)",
+      "Edit(web/**/*.test.tsx)"
+    ]
+  }
+}
