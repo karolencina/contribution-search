@@ -14,7 +14,10 @@ def matches(contribution: Contribution, q: str) -> bool:
 
 
 def create_app(contributions: Sequence[Mapping[str, object]]) -> FastAPI:
-    items = [Contribution.model_validate(record) for record in contributions]
+    items = sorted(
+        (Contribution.model_validate(record) for record in contributions),
+        key=lambda c: (c.startTime, c.id),
+    )
     app = FastAPI(title="Contribution Search API")
 
     @app.get("/contributions")
