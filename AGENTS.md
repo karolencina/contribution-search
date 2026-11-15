@@ -9,12 +9,9 @@ limits, restrictions on destructive actions and the review process. Do not edit 
 ## Project
 
 Contribution Search: a FastAPI backend (`api/`) and a Next.js frontend (`web/`) to
-browse and search contributions. The brief (the PDF in the repo root) is the source
-of truth. Anything not in it gets proposed in one sentence, not built.
+browse and search contributions. The `BRIEF.md` is the source of truth - it is not committed. Anything not in the brief gets proposed in one sentence, not built.
 
 ## Hard stops
-
-These are repeated here because breaking them is costly or hard to undo.
 
 1. **Plan first.** Ask questions and propose a plan. Wait for the Owner's approval before writing code.
 2. **Never commit, push or rewrite history.** Only the Owner does that, and the Owner writes the

@@ -73,7 +73,7 @@ commands from `web/`. Each tool has a **check** form and a **write** form.
 
 - Stick to FastAPI and Next.js plus only the libraries that are necessary.
 - **Pre-approved**:
-  - Backend: `fastapi`, `uvicorn`, `httpx`, `pytest`, `ruff`, `mypy`, `pip-audit`
+  - Backend: `fastapi`, `uvicorn`, `httpx2`, `pytest`, `ruff`, `mypy`, `pip-audit`
   - Frontend: `next`, `react`, `react-dom`, `typescript`, `eslint` with
     `eslint-config-next`, `prettier`, `vitest`, `jsdom`, `testing-library`
 - For anything else, the Agent asks first and states what it is for, why it's
