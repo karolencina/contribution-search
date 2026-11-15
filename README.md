@@ -13,9 +13,10 @@ Next.js frontend (`web/`).
 | ------------------------------------------------------------- | ------------- |
 | Backend: search by title or owner (case-insensitive, literal) | Built, tested |
 | Backend: sorting (`startTime`, then `id`) and UTC output      | Built, tested |
-| Backend: pagination, `page` / `pageSize` validation           | Not built yet |
-| Backend: loading `api/contributions.json`                     | Not built yet |
-| Frontend (`web/`)                                             | Not started   |
+| Backend: pagination, `page` / `pageSize` validation           | Built, tested |
+| Backend: loading `api/contributions.json`                     | Built, tested |
+| Frontend: first load, search box, debounce                    | Built, tested |
+| Frontend: paging, stale responses, loading, empty, error      | Not built yet |
 
 ## Requirements
 
@@ -48,7 +49,7 @@ The server listens on `http://127.0.0.1:8000`. Interactive docs are at `/docs`, 
 at `/redoc`, and the schema at `/openapi.json`. The docs page loads its scripts from a public
 CDN, so it needs an internet connection.
 
-The app starts with no data for now, so every search returns an empty list.
+The app loads the 40 sample records from `api/contributions.json` when it starts.
 
 ### Test and check
 
@@ -69,7 +70,7 @@ To fix formatting and simple lint problems, run `ruff format .` and `ruff check 
 `GET /contributions` searches contributions by title or owner. The full contract, with every
 rule, error and example, is in [api/docs/API-CONTRACT.md](api/docs/API-CONTRACT.md).
 
-Try it once the server is running (the list is empty until the data is loaded):
+Try it once the server is running:
 
 ```bash
 curl "http://127.0.0.1:8000/contributions?q=api"
@@ -77,7 +78,30 @@ curl "http://127.0.0.1:8000/contributions?q=api"
 
 ## Frontend (`web/`)
 
-TODO-WRITE: how to install, run, test and build, once the frontend exists.
+From the repository root:
+
+```bash
+cd web
+npm ci
+npm run dev
+```
+
+Open **http://localhost:3000**. Use `localhost`, not `127.0.0.1`: the API only accepts requests
+from the origin `http://localhost:3000` (CORS), so the list would not load from another address.
+The page calls the API at `http://127.0.0.1:8000`, so start the backend first (see above).
+
+Run these from `web/`:
+
+| Purpose               | Command                |
+| --------------------- | ---------------------- |
+| Tests                 | `npm run test`         |
+| Format                | `npm run format:check` |
+| Lint                  | `npm run lint`         |
+| Types                 | `npm run typecheck`    |
+| Build                 | `npm run build`        |
+| Known vulnerabilities | `npm audit --omit=dev` |
+
+To fix formatting and simple lint problems, run `npm run format` and `npm run lint:fix`.
 
 ## Verify manually
 
