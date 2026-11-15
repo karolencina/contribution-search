@@ -19,3 +19,5 @@ class Contribution(BaseModel):
 class SearchResponse(BaseModel):
     items: list[Contribution]
     total: int
+    page: int
+    pageSize: int

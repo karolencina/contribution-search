@@ -1,8 +1,13 @@
 from collections.abc import Mapping, Sequence
+from typing import Annotated
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 
 from app.models import Contribution, SearchResponse
+
+DEFAULT_PAGE_SIZE = 10
+MAX_PAGE_SIZE = 100
+MAX_PAGE = 1_000_000
 
 
 def matches(contribution: Contribution, q: str) -> bool:
@@ -21,12 +26,22 @@ def create_app(contributions: Sequence[Mapping[str, object]]) -> FastAPI:
     app = FastAPI(title="Contribution Search API")
 
     @app.get("/contributions")
-    def search(q: str | None = None) -> SearchResponse:
+    def search(
+        q: str | None = None,
+        page: Annotated[int, Query(ge=1, le=MAX_PAGE)] = 1,
+        pageSize: Annotated[int, Query(ge=1, le=MAX_PAGE_SIZE)] = DEFAULT_PAGE_SIZE,
+    ) -> SearchResponse:
         if q is None or not q.strip():
             matched = items
         else:
             matched = [c for c in items if matches(c, q)]
-        return SearchResponse(items=matched, total=len(matched))
+        start = (page - 1) * pageSize
+        return SearchResponse(
+            items=matched[start : start + pageSize],
+            total=len(matched),
+            page=page,
+            pageSize=pageSize,
+        )
 
     return app
 
