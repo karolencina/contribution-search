@@ -9,18 +9,18 @@ Next.js frontend (`web/`).
 
 ## Status
 
-| Part                                                                     | State         |
-| ------------------------------------------------------------------------ | ------------- |
-| Backend: search by title or owner (case-insensitive, literal)            | Built, tested |
-| Backend: sorting (`startTime`, then `id`) and UTC output                 | Built, tested |
-| Backend: pagination, `page` / `pageSize` validation                      | Not built yet |
-| Backend: loading `api/contributions.json`                                | Not built yet |
-| Frontend (`web/`)                                                        | Not started   |
+| Part                                                          | State         |
+| ------------------------------------------------------------- | ------------- |
+| Backend: search by title or owner (case-insensitive, literal) | Built, tested |
+| Backend: sorting (`startTime`, then `id`) and UTC output      | Built, tested |
+| Backend: pagination, `page` / `pageSize` validation           | Not built yet |
+| Backend: loading `api/contributions.json`                     | Not built yet |
+| Frontend (`web/`)                                             | Not started   |
 
 ## Requirements
 
-- Python 3.14 (`api/pyproject.toml` requires `>=3.14`)
-- Node.js: TODO-WRITE (once `web/` exists)
+- Python 3.14 or newer (set in `api/pyproject.toml`; tested on 3.14.x)
+- Node.js ^22.22.2, ^24.15.0 or ≥26 (set in `web/package.json` `engines`; tested on 26.0.0)
 
 ## Backend (`api/`)
 

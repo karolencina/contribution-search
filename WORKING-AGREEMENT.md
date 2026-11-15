@@ -69,7 +69,14 @@ commands from `web/`. Each tool has a **check** form and a **write** form.
 | Build                               | `npm run build`        |                    |
 | Known vulnerabilities               | `npm audit --omit=dev` |                    |
 
-## 3. Dependency Boundaries
+## 3. Accessibility
+
+- Every control has an accessible name, tested with role queries (getByRole(..., { name })).
+- Everything works by keyboard alone, with a visible focus.
+- Loading, empty and error states are announced to screen readers.
+- The page works at 320px wide and 200% zoom, with text contrast of at least 4.5:1.
+
+## 4. Dependency Boundaries
 
 - Stick to FastAPI and Next.js plus only the libraries that are necessary.
 - **Pre-approved**:
@@ -85,7 +92,7 @@ commands from `web/`. Each tool has a **check** form and a **write** form.
 - No global installs. Python packages go in `api/.venv`, npm packages in `web/`.
   Lockfiles and pinned versions are committed.
 
-## 4. Restrictions on Destructive Actions
+## 5. Restrictions on Destructive Actions
 
 - Never run destructive or dangerous commands (`rm -rf`, `sudo`, `git clean`, `git reset --hard`).
 - Never permanently change history or other people's work: no commits, no pushes,
@@ -98,7 +105,7 @@ commands from `web/`. Each tool has a **check** form and a **write** form.
 - Other AI tools: the same rules apply through `AGENTS.md`. Nothing enters history unless the Owner
   commits it after reading the diff.
 
-## 5. Review Process for Generated Code
+## 6. Review Process for Generated Code
 
 1. **Plan first.** The Agent asks clarifying questions and proposes a plan as
    reviewable markdown. The Owner approves it before any code is written.
@@ -134,7 +141,7 @@ commands from `web/`. Each tool has a **check** form and a **write** form.
 - **Duplicated logic (DRY):** the same rule written twice, such as the page-size limits or the
   matching rule. Extract it.
 
-  ## 6. Context and Token Use
+  ## 7. Context and Token Use
 
 Every request re-sends the whole conversation, so long or cluttered sessions cost more
 on every turn. These are conventions, not enforced.
@@ -154,7 +161,3 @@ on every turn. These are conventions, not enforced.
   without the Owner's approval. Each adds token use, and loops add it even while idle.
 - **Keep always-loaded files lean** (`CLAUDE.md`, `AGENTS.md`, this file). Claude Code warns
   in `/status` when one is too long.
-
-Resources:
-https://code.claude.com/docs/en/best-practices
-https://bump.sh/blog/api-contracts-extended-introduction/
