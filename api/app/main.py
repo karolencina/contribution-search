@@ -4,12 +4,14 @@ from pathlib import Path
 from typing import Annotated
 
 from fastapi import FastAPI, Query
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.models import Contribution, SearchResponse
 
 DEFAULT_PAGE_SIZE = 10
 MAX_PAGE_SIZE = 100
 MAX_PAGE = 1_000_000
+FRONTEND_ORIGIN = "http://localhost:3000"
 DATASET_PATH = Path(__file__).resolve().parent.parent / "contributions.json"
 
 
@@ -27,6 +29,9 @@ def create_app(contributions: Sequence[Mapping[str, object]]) -> FastAPI:
         key=lambda c: (c.startTime, c.id),
     )
     app = FastAPI(title="Contribution Search API")
+    app.add_middleware(
+        CORSMiddleware, allow_origins=[FRONTEND_ORIGIN], allow_methods=["GET"]
+    )
 
     @app.get("/contributions")
     def search(
