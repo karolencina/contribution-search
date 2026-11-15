@@ -118,9 +118,9 @@ def test_accents_are_not_folded() -> None:
 
 
 def test_decomposed_accent_does_not_match_precomposed() -> None:
-    client = make_client([record(1, "café")])
+    client = make_client([record(1, "cafe\u0301")])
 
-    response = client.get("/contributions", params={"q": "café"})
+    response = client.get("/contributions", params={"q": "caf\u00e9"})
 
     assert response.status_code == 200
     assert response.json()["total"] == 0
@@ -182,7 +182,7 @@ def test_empty_query_means_no_filter() -> None:
     assert response.json()["total"] == 2
 
 
-@pytest.mark.parametrize("raw_q", ["%20%20", "+"])
+@pytest.mark.parametrize("raw_q", ["%20%20", "+", "%09"])
 def test_whitespace_only_query_means_no_filter(raw_q: str) -> None:
     client = make_client([record(1, "Alpha"), record(2, "Beta")])
 
@@ -207,3 +207,13 @@ def test_query_is_not_trimmed() -> None:
     assert response.status_code == 200
     assert ids(response.json()) == [1, 3]
     assert response.json()["total"] == 2
+
+
+def test_trailing_space_in_query_is_not_trimmed() -> None:
+    client = make_client([record(1, "Reporting API"), record(2, "Api tooling")])
+
+    response = client.get("/contributions?q=api%20")
+
+    assert response.status_code == 200
+    assert ids(response.json()) == [2]
+    assert response.json()["total"] == 1
