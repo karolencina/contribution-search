@@ -1,4 +1,6 @@
+import json
 from collections.abc import Mapping, Sequence
+from pathlib import Path
 from typing import Annotated
 
 from fastapi import FastAPI, Query
@@ -8,6 +10,7 @@ from app.models import Contribution, SearchResponse
 DEFAULT_PAGE_SIZE = 10
 MAX_PAGE_SIZE = 100
 MAX_PAGE = 1_000_000
+DATASET_PATH = Path(__file__).resolve().parent.parent / "contributions.json"
 
 
 def matches(contribution: Contribution, q: str) -> bool:
@@ -46,4 +49,4 @@ def create_app(contributions: Sequence[Mapping[str, object]]) -> FastAPI:
     return app
 
 
-app = create_app([])
+app = create_app(json.loads(DATASET_PATH.read_text(encoding="utf-8")))
