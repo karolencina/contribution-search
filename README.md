@@ -16,7 +16,8 @@ Next.js frontend (`web/`).
 | Backend: pagination, `page` / `pageSize` validation           | Built, tested |
 | Backend: loading `api/contributions.json`                     | Built, tested |
 | Frontend: first load, search box, debounce                    | Built, tested |
-| Frontend: paging, stale responses, loading, empty, error      | Not built yet |
+| Frontend: stale responses, loading and error states           | Built, tested |
+| Frontend: paging and the empty state                          | Not built yet |
 
 ## Requirements
 

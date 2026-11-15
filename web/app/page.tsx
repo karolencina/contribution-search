@@ -2,37 +2,26 @@
 
 import { useEffect, useState } from "react";
 
-const API_URL = "http://127.0.0.1:8000";
+import { useContributions } from "./useContributions";
+
 const DEBOUNCE_MS = 300;
-
-type Contribution = {
-  id: number;
-  title: string;
-  owner: string;
-  startTime: string;
-};
-
-type Result = { items: Contribution[]; total: number };
 
 export default function Page() {
   const [text, setText] = useState("");
   const [query, setQuery] = useState("");
-  const [result, setResult] = useState<Result | null>(null);
+  const { status, result } = useContributions(query);
 
   useEffect(() => {
     const timer = setTimeout(() => setQuery(text), DEBOUNCE_MS);
     return () => clearTimeout(timer);
   }, [text]);
 
-  useEffect(() => {
-    const params = new URLSearchParams({ page: "1", pageSize: "10" });
-    if (query !== "") {
-      params.set("q", query);
-    }
-    fetch(`${API_URL}/contributions?${params}`)
-      .then((response) => response.json())
-      .then(setResult);
-  }, [query]);
+  let message = "";
+  if (status === "loading") {
+    message = "Loading contributions";
+  } else if (result !== null) {
+    message = `${result.total} contributions`;
+  }
 
   return (
     <main>
@@ -45,20 +34,19 @@ export default function Page() {
           onChange={(event) => setText(event.target.value)}
         />
       </label>
-      {result === null ? (
-        <p role="status">Loading contributions</p>
-      ) : (
-        <>
-          <p role="status">{result.total} contributions</p>
-          <ul>
-            {result.items.map((item) => (
-              <li key={item.id}>
-                {item.title} {item.owner}{" "}
-                <time dateTime={item.startTime}>{item.startTime}</time>
-              </li>
-            ))}
-          </ul>
-        </>
+      <p role="status">{message}</p>
+      {status === "error" && (
+        <p role="alert">Could not load contributions. Try searching again.</p>
+      )}
+      {result !== null && (
+        <ul aria-busy={status === "loading"}>
+          {result.items.map((item) => (
+            <li key={item.id}>
+              {item.title} {item.owner}{" "}
+              <time dateTime={item.startTime}>{item.startTime}</time>
+            </li>
+          ))}
+        </ul>
       )}
     </main>
   );
