@@ -1,9 +1,15 @@
 import { render, screen } from "@testing-library/react";
-import { expect, test } from "vitest";
+import { afterEach, expect, test, vi } from "vitest";
 
+import { fakeFetch } from "../test/fakeFetch";
 import Page from "./page";
 
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
+
 test("the home page has a heading", () => {
+  fakeFetch();
   render(<Page />);
 
   expect(
