@@ -96,6 +96,39 @@ def test_no_matches_is_200_with_empty_items() -> None:
 
 @pytest.mark.parametrize(
     ("q", "title"),
+    [("ÉCOLE", "école partnership"), ("STRASSE", "Straße")],
+)
+def test_search_matches_non_ascii_case(q: str, title: str) -> None:
+    client = make_client([record(1, title), record(2, "plain")])
+
+    response = client.get("/contributions", params={"q": q})
+
+    assert response.status_code == 200
+    assert ids(response.json()) == [1]
+    assert response.json()["total"] == 1
+
+
+def test_accents_are_not_folded() -> None:
+    client = make_client([record(1, "école partnership")])
+
+    response = client.get("/contributions", params={"q": "ecole"})
+
+    assert response.status_code == 200
+    assert response.json()["total"] == 0
+
+
+def test_decomposed_accent_does_not_match_precomposed() -> None:
+    # "cafe" + U+0301 (combining accent) versus "caf" + U+00E9 (single letter).
+    client = make_client([record(1, "café")])
+
+    response = client.get("/contributions", params={"q": "café"})
+
+    assert response.status_code == 200
+    assert response.json()["total"] == 0
+
+
+@pytest.mark.parametrize(
+    ("q", "title"),
     [
         (".", "a.b"),
         ("*", "a*b"),
