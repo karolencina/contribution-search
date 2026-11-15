@@ -118,7 +118,6 @@ def test_accents_are_not_folded() -> None:
 
 
 def test_decomposed_accent_does_not_match_precomposed() -> None:
-    # "cafe" + U+0301 (combining accent) versus "caf" + U+00E9 (single letter).
     client = make_client([record(1, "café")])
 
     response = client.get("/contributions", params={"q": "café"})
