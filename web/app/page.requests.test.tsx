@@ -101,6 +101,10 @@ describe("requests", () => {
   test.each([
     ["an HTTP 500", (fake: FakeFetch) => fake.fail(1, 500)],
     ["a network error", (fake: FakeFetch) => fake.networkError(1)],
+    [
+      "a 200 response with an unexpected body",
+      (fake: FakeFetch) => fake.respond(1, {}),
+    ],
   ])(
     "shows an error and hides the old results after %s",
     async (_name, breakRequest) => {

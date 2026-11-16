@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 
 const API_URL = "http://127.0.0.1:8000";
@@ -15,6 +17,14 @@ type Result = { items: Contribution[]; total: number };
 export type Search = { query: string; page: number };
 
 type Settled = { search: Search; result: Result | null };
+
+function isResult(body: unknown): body is Result {
+  if (typeof body !== "object" || body === null) {
+    return false;
+  }
+  const { items, total } = body as Partial<Result>;
+  return Array.isArray(items) && typeof total === "number";
+}
 
 export function useContributions(search: Search) {
   const [settled, setSettled] = useState<Settled | null>(null);
@@ -38,11 +48,14 @@ export function useContributions(search: Search) {
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`);
         }
-        return response.json() as Promise<Result>;
+        return response.json() as Promise<unknown>;
       })
-      .then((result) => {
+      .then((body) => {
+        if (!isResult(body)) {
+          throw new Error("Unexpected response body");
+        }
         if (isLatest()) {
-          setSettled({ search, result });
+          setSettled({ search, result: body });
         }
       })
       .catch(() => {
