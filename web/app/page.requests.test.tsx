@@ -154,11 +154,13 @@ describe("requests", () => {
     typeText("a");
     await wait(300);
 
+    expect(screen.getByRole("list")).toHaveAttribute("aria-busy", "true");
+    expect(items()).toHaveLength(1);
+
+    await wait(200);
     expect(screen.getByRole("status")).toHaveTextContent(
       "Loading contributions",
     );
-    expect(screen.getByRole("list")).toHaveAttribute("aria-busy", "true");
-    expect(items()).toHaveLength(1);
 
     await settle(() =>
       api.respond(1, response([quarterlyReport, euDataExport], 2)),
