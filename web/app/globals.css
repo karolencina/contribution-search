@@ -1,11 +1,14 @@
 :root {
-  --page: #f3f6f7;
-  --card: #ffffff;
-  --text: #1d1c1a;
-  --text-secondary: #676c77;
-  --fill: #bccefa;
-  --fill-hover: #dce6fb;
-  --edge: #888e9a;
+  --bg: #ffffff;
+  --surface: #f3f3f3;
+  --line: #eeeeee;
+  --text: #0a0a0a;
+  --text-secondary: #62666f;
+  --text-label: #6e737e;
+  --ink-hover: #3a3a3a;
+  --fill: #e3eafd;
+  --blue: #84a3f8;
+  --blue-text: #3b5bc7;
   --red: #e26073;
   color-scheme: light;
 }
@@ -16,8 +19,9 @@
 
 body {
   margin: 0;
-  padding: 1rem;
-  background: var(--page);
+  overflow-x: clip;
+  padding: 2rem 1.25rem 4rem;
+  background: var(--bg);
   color: var(--text);
   font-family:
     system-ui,
@@ -28,49 +32,210 @@ body {
     Arial,
     sans-serif;
   line-height: 1.5;
+  letter-spacing: -0.011em;
+  -webkit-font-smoothing: antialiased;
 }
 
 main {
-  max-width: 44rem;
+  max-width: 46rem;
   margin: 0 auto;
-  padding: 1.25rem;
-  background: var(--card);
-  border-radius: 1.25rem;
+}
+
+/* A soft glow along the top of the window, behind everything. It stays mostly
+   white. Where the browser supports scroll-driven animation, its colours drift
+   as you scroll down. Elsewhere, and for reduced motion, it stays still. */
+@property --glow-a {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #84a3f8;
+}
+
+@property --glow-b {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #e26073;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 45% at 18% -5%, var(--glow-a), transparent 70%),
+    radial-gradient(55% 40% at 85% -8%, var(--glow-b), transparent 70%);
+  opacity: 0.4;
+}
+
+@keyframes glow-shift {
+  to {
+    --glow-a: #a5a3e1;
+    --glow-b: #84a3f8;
+  }
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    body::before {
+      animation: glow-shift linear both;
+      animation-timeline: scroll(root);
+    }
+  }
 }
 
 @media (min-width: 40rem) {
   body {
-    padding: 3rem 1rem;
+    padding: 4rem 1.5rem 6rem;
+  }
+}
+
+/* The title, description and search box stay at the top of the window. On a
+   short window they scroll away with the page, so they cannot cover it. */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 1rem 0;
+}
+
+/* The blur sits in its own layer behind the header's content. A mask fades it
+   out at the bottom and the sides, so it has no hard edge. It reaches past the
+   header on purpose, and the body clips what goes beyond the window. */
+header::before {
+  content: "";
+  position: absolute;
+  inset: 0 -3rem -2.5rem;
+  z-index: -1;
+  pointer-events: none;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  -webkit-mask-image:
+    linear-gradient(to bottom, #000 calc(100% - 2.5rem), transparent),
+    linear-gradient(
+      to right,
+      transparent,
+      #000 3rem,
+      #000 calc(100% - 3rem),
+      transparent
+    );
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to bottom, #000 calc(100% - 2.5rem), transparent),
+    linear-gradient(
+      to right,
+      transparent,
+      #000 3rem,
+      #000 calc(100% - 3rem),
+      transparent
+    );
+  mask-composite: intersect;
+}
+
+@media (max-height: 40rem) {
+  header {
+    position: static;
   }
 
-  main {
-    padding: 2rem;
+  header::before {
+    display: none;
+  }
+}
+
+/* The header has no background colour, only a blur that softens the cards
+   scrolling under it. Where the browser supports it, it also drops its
+   description and shrinks the title as you scroll. */
+@keyframes title-shrink {
+  to {
+    margin-bottom: 0.75rem;
+    font-size: 1.5rem;
+  }
+}
+
+@keyframes intro-hide {
+  to {
+    max-height: 0;
+    margin-bottom: 0;
+    opacity: 0;
+  }
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) and (min-height: 40.01rem) {
+    h1,
+    .intro {
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root);
+      animation-range: 0 8rem;
+    }
+
+    h1 {
+      animation-name: title-shrink;
+    }
+
+    .intro {
+      animation-name: intro-hide;
+    }
   }
 }
 
 h1 {
-  margin: 0 0 1.25rem;
-  font-size: clamp(1.5rem, 5vw, 2rem);
-  line-height: 1.2;
+  margin: 0 0 1rem;
+  font-size: clamp(2.25rem, 9vw, 3.5rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.045em;
 }
 
-label {
-  display: block;
-  font-weight: 600;
+.intro {
+  max-width: 34rem;
+  max-height: 8rem;
+  margin: 0 0 2rem;
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}
+
+.search-field {
+  position: relative;
+}
+
+.search-field svg {
+  position: absolute;
+  top: 50%;
+  left: 1.125rem;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  pointer-events: none;
 }
 
 input {
   display: block;
   width: 100%;
-  min-height: 2.75rem;
-  margin-top: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--edge);
-  border-radius: 0.75rem;
-  background: var(--card);
+  height: 3.25rem;
+  padding: 0 1.25rem 0 3.25rem;
+  appearance: none;
+  border: 0;
+  border-radius: 1rem;
+  background: var(--surface);
   color: var(--text);
   font: inherit;
-  font-weight: 400;
+  font-size: 1rem;
+  letter-spacing: inherit;
+}
+
+input::placeholder {
+  color: var(--text-secondary);
+  opacity: 1;
+}
+
+input:focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: 0;
+  background: var(--bg);
+  box-shadow: inset 0 0 0 2px var(--blue-text);
 }
 
 :focus-visible {
@@ -80,20 +245,22 @@ input {
 
 [role="status"] {
   min-height: 1.5rem;
-  margin: 1rem 0 0.5rem;
+  margin: 1.75rem 0 1.25rem;
   color: var(--text-secondary);
+  font-size: 0.9375rem;
 }
 
 [role="alert"] {
-  margin: 0.5rem 0;
-  padding: 0.75rem 1rem;
+  margin: 0 0 1.25rem;
+  padding: 1rem 1.25rem;
   border-left: 0.375rem solid var(--red);
-  background: var(--page);
+  border-radius: 1rem;
+  background: var(--surface);
 }
 
 ul {
   display: grid;
-  gap: 0.75rem;
+  gap: 0.625rem;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -104,56 +271,125 @@ ul[aria-busy="true"] {
 }
 
 li {
-  padding: 1rem 1.25rem;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 12rem 11rem;
+  align-items: center;
+  gap: 0.5rem 1.5rem;
+  padding: 0.875rem 1.25rem;
+  border: 1px solid var(--line);
   border-radius: 1rem;
-  background: var(--page);
+  background: var(--bg);
+}
+
+@media (max-width: 40rem) {
+  li {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .title {
-  display: block;
-  font-weight: 600;
+  min-width: 0;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
   overflow-wrap: anywhere;
 }
 
-.meta {
-  display: flex;
-  flex-wrap: wrap;
-  column-gap: 1rem;
-  color: var(--text-secondary);
+.field {
+  display: grid;
+  align-self: stretch;
+  align-content: start;
+  gap: 0.25rem;
+  min-width: 0;
+  padding-left: 1rem;
+  border-left: 1px solid var(--line);
   font-size: 0.9375rem;
+}
+
+@media (max-width: 40rem) {
+  .field {
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+
+.label {
+  color: var(--text-label);
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.owner {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  color: var(--text);
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.avatar {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: var(--fill);
+  color: var(--blue-text);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+li time {
+  white-space: nowrap;
+}
+
+.date {
+  font-weight: 600;
 }
 
 nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
-  margin-top: 1rem;
+  gap: 1rem;
+  margin-top: 2rem;
 }
 
 nav span {
   color: var(--text-secondary);
+  font-size: 0.9375rem;
 }
 
 button {
-  min-width: 2.75rem;
-  min-height: 2.75rem;
-  padding: 0 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
   border: 0;
-  border-radius: 0.75rem;
-  background: var(--fill);
-  color: var(--text);
+  border-radius: 999px;
+  background: var(--text);
+  color: var(--bg);
   font: inherit;
-  font-weight: 600;
   cursor: pointer;
 }
 
 button:hover:not(:disabled) {
-  background: var(--fill-hover);
+  background: var(--ink-hover);
 }
 
 button:disabled {
-  background: var(--page);
-  color: var(--text-secondary);
+  background: var(--surface);
+  color: #9a9da4;
   cursor: not-allowed;
 }

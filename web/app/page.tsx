@@ -1,21 +1,71 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 
 import { PAGE_SIZE, type Search, useContributions } from "./useContributions";
 
 const DEBOUNCE_MS = 300;
 const SLOW_MS = 200;
 
-const startTimeFormat = new Intl.DateTimeFormat("en-GB", {
+const dateFormat = new Intl.DateTimeFormat("en-GB", {
   day: "numeric",
   month: "short",
   year: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-  hour12: false,
   timeZone: "UTC",
 });
+
+const timeFormat = new Intl.DateTimeFormat("en-GB", {
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23",
+  timeZone: "UTC",
+});
+
+// The first letter of the first and last word of a name: "Elena Petrova" gives "EP".
+function initials(name: string): string {
+  const words = name.split(/\s+/).filter(Boolean);
+  if (words.length === 0) {
+    return "";
+  }
+  const firstAndLast =
+    words.length === 1 ? [words[0]] : [words[0], words[words.length - 1]];
+  return firstAndLast.map((word) => Array.from(word)[0].toUpperCase()).join("");
+}
+
+function Icon({ children }: { children: ReactNode }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="24"
+      height="24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {children}
+    </svg>
+  );
+}
+
+function Chevron({ direction }: { direction: "left" | "right" }) {
+  return (
+    <Icon>
+      <path d={direction === "left" ? "M15 6l-6 6 6 6" : "M9 6l6 6-6 6"} />
+    </Icon>
+  );
+}
+
+function SearchIcon() {
+  return (
+    <Icon>
+      <circle cx="11" cy="11" r="6" />
+      <path d="M20 20l-4.5-4.5" />
+    </Icon>
+  );
+}
 
 export default function Page() {
   const [text, setText] = useState("");
@@ -60,15 +110,23 @@ export default function Page() {
 
   return (
     <main>
-      <h1>Contribution Search</h1>
-      <label>
-        Search by title or owner
-        <input
-          type="search"
-          value={text}
-          onChange={(event) => setText(event.target.value)}
-        />
-      </label>
+      <header>
+        <h1>Contributions</h1>
+        <p className="intro">
+          Browse the work delivered across teams, and search it by title or
+          owner.
+        </p>
+        <div className="search-field">
+          <SearchIcon />
+          <input
+            type="search"
+            aria-label="Search by title or owner"
+            placeholder="Search by title or owner"
+            value={text}
+            onChange={(event) => setText(event.target.value)}
+          />
+        </div>
+      </header>
       <p role="status">{message}</p>
       {status === "error" && (
         <p role="alert">
@@ -78,17 +136,33 @@ export default function Page() {
       )}
       {result !== null && result.items.length > 0 && (
         <ul aria-busy={status === "loading"}>
-          {result.items.map((item) => (
-            <li key={item.id}>
-              <span className="title">{item.title}</span>{" "}
-              <span className="meta">
-                <span>{item.owner}</span>{" "}
-                <time dateTime={item.startTime}>
-                  {startTimeFormat.format(new Date(item.startTime))} UTC
-                </time>
-              </span>
-            </li>
-          ))}
+          {result.items.map((item) => {
+            const start = new Date(item.startTime);
+            const ownerInitials = initials(item.owner);
+            return (
+              <li key={item.id}>
+                <span className="title">{item.title}</span>
+                <div className="field">
+                  <span className="label">Owner</span>
+                  <span className="owner">
+                    {ownerInitials !== "" && (
+                      <span className="avatar" aria-hidden="true">
+                        {ownerInitials}
+                      </span>
+                    )}
+                    {item.owner}
+                  </span>
+                </div>
+                <div className="field">
+                  <span className="label">Starts</span>
+                  <time dateTime={item.startTime}>
+                    <span className="date">{dateFormat.format(start)}</span>{" "}
+                    {timeFormat.format(start)}
+                  </time>
+                </div>
+              </li>
+            );
+          })}
         </ul>
       )}
       {totalPages > 1 && (
@@ -101,7 +175,7 @@ export default function Page() {
               setSearch((current) => ({ ...current, page: current.page - 1 }))
             }
           >
-            Previous
+            <Chevron direction="left" />
           </button>
           <span>
             {search.page} of {totalPages}
@@ -114,7 +188,7 @@ export default function Page() {
               setSearch((current) => ({ ...current, page: current.page + 1 }))
             }
           >
-            Next
+            <Chevron direction="right" />
           </button>
         </nav>
       )}
