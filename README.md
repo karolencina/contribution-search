@@ -3,23 +3,6 @@
 A small full-stack app to browse and search contributions: a FastAPI backend (`api/`) and a
 Next.js frontend (`web/`).
 
-> **TODO-DELETE** this note before submitting. The README grows with the build. Only what has
-> been built and run is described. Sections marked `TODO-WRITE` are still to do. Find them with
-> `grep -rn "TODO[-]" .`
-
-## Status
-
-| Part                                                          | State                         |
-| ------------------------------------------------------------- | ----------------------------- |
-| Backend: search by title or owner (case-insensitive, literal) | Built, tested                 |
-| Backend: sorting (`startTime`, then `id`) and UTC output      | Built, tested                 |
-| Backend: pagination, `page` / `pageSize` validation           | Built, tested                 |
-| Backend: loading `api/contributions.json`                     | Built, tested                 |
-| Frontend: first load, search box, debounce                    | Built, tested                 |
-| Frontend: stale responses, loading and error states           | Built, tested                 |
-| Frontend: paging and the empty state                          | Built, tested                 |
-| Frontend: layout, colours, readable UTC dates                 | Built, checked in Chrome only |
-
 ## Requirements
 
 - Python 3.14 or newer (set in `api/pyproject.toml`; tested on 3.14.x)
@@ -38,8 +21,7 @@ source .venv/bin/activate
 pip install -r requirements-dev.txt
 ```
 
-`requirements.txt` has what the app needs to run. `requirements-dev.txt` adds the test and
-check tools, and includes the first file.
+`requirements-dev.txt` adds the test and check tools to `requirements.txt`.
 
 ### Run
 
@@ -47,11 +29,9 @@ check tools, and includes the first file.
 uvicorn app.main:app --reload
 ```
 
-The server listens on `http://127.0.0.1:8000`. Interactive docs are at `/docs`, a read-only view
-at `/redoc`, and the schema at `/openapi.json`. The docs page loads its scripts from a public
-CDN, so it needs an internet connection.
-
-The app loads the 40 sample records from `api/contributions.json` when it starts.
+The server listens on `http://127.0.0.1:8000` and loads the 40 sample records from
+`api/contributions.json` when it starts. Interactive docs are at `/docs` (they load scripts from
+a public CDN, so they need an internet connection).
 
 ### Test and check
 
@@ -90,6 +70,7 @@ npm run dev
 
 Open **http://localhost:3000**. Use `localhost`, not `127.0.0.1`: the API only accepts requests
 from the origin `http://localhost:3000` (CORS), so the list would not load from another address.
+If port 3000 is already in use, Next.js moves to 3001 and the CORS rule blocks the page, which then shows only a generic error: free port 3000 first.
 The page calls the API at `http://127.0.0.1:8000`, so start the backend first (see above).
 
 Run these from `web/`:
@@ -107,12 +88,28 @@ To fix formatting and simple lint problems, run `npm run format` and `npm run li
 
 ## Verify manually
 
-TODO-WRITE: the manual checks (keyboard-only, 320px wide, 200% zoom, and the browsers actually
-tried), once the frontend exists.
+The automated checks do not cover the browser. Start the API and the frontend (see above), open
+**http://localhost:3000** and check:
+
+- **Loading state.** The local API answers too fast to see it. In the browser's developer tools,
+  throttle the network to Slow 3G and reload: the page shows "Loading contributions".
+- **Empty and error states.** Search for `zzz`: the page says no contributions match it. Stop the
+  API and search again: an error message appears. Restart the API and change the search text to
+  recover.
+- **Rapid input.** With Slow 3G on, type `rep`, replace it with `sarah`, clear it, and click Next
+  while it loads: the list always matches the search box.
+- **Keyboard only.** Tab reaches the search box, then the clear button (once there is text), then
+  Previous page and Next page when they are shown. Each shows a visible focus ring, and Previous
+  and Next work with Enter and Space.
+- **320px wide and 200% zoom.** Use the browser's responsive mode at 320px wide, then zoom to
+  200%: no sideways scrolling, nothing cut off, and long titles end in an ellipsis.
+- **Screen reader.** With VoiceOver or another: a search announces the count or
+  that nothing matches, changing page announces the new page (for example "2 of 3"), and the error
+  message is announced.
+- **Browsers.** Repeat the checks above in Chrome, Firefox and Safari.
 
 ## More documents
 
 - [DECISIONS.md](DECISIONS.md): key decisions, trade-offs, limitations
 - [WORKING-AGREEMENT.md](WORKING-AGREEMENT.md): the rules for the work, including AI-assisted work
 - [AI-WORKFLOW.md](AI-WORKFLOW.md): what was delegated to AI tools and what was checked
-- [docs/TEST-PLAN.md](docs/TEST-PLAN.md): the test list

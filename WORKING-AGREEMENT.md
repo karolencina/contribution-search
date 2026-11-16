@@ -101,7 +101,6 @@ commands from `web/`. Each tool has a **check** form and a **write** form.
 - Never weaken a test to make it pass: no deleting, skipping or loosening
   assertions. Tests only change with the Owner's explicit approval.
 - Don't edit the brief or this agreement.
-- Staying inside the project folder, and not weakening tests beyond the approval prompt.
 - Other AI tools: the same rules apply through `AGENTS.md`. Nothing enters history unless the Owner
   commits it after reading the diff.
 
@@ -141,13 +140,13 @@ commands from `web/`. Each tool has a **check** form and a **write** form.
 - **Duplicated logic (DRY):** the same rule written twice, such as the page-size limits or the
   matching rule. Extract it.
 
-  ## 7. Context and Token Use
+## 7. Context and Token Use
 
 Every request re-sends the whole conversation, so long or cluttered sessions cost more
 on every turn. These are conventions, not enforced.
 
 - **Owner:** one task per session. `/clear` between unrelated tasks; state lives in the
-  repo (`TODO.md`, docs, git), not in the chat. Set model and effort at the start and keep
+  repo (local to-do list, docs, git), not in the chat. Set model and effort at the start and keep
   them (a mid-session switch re-reads everything uncached). Use the cheapest model that does
   the job, stepping up for the hard parts. Compact at a break, with a focus, not mid-task.
   If a correction fails twice, `/clear` and write a better prompt.

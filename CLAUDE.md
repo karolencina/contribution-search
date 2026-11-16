@@ -12,6 +12,6 @@
 
 # Compact instructions
 
-When compacting, keep: the open items in TODO.md, decisions made, the API contract, the test list,
+When compacting, keep: decisions made, the API contract, the test list,
 and the last result of each check command. Drop file contents that can be read again and command
 output that has already been dealt with.

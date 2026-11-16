@@ -26,8 +26,7 @@ browse and search contributions. The `BRIEF.md` is the source of truth - it is n
 
 The Owner makes every decision. When you find something that needs the Owner (a trade-off,
 a change to behaviour, scope or the API contract, a new dependency, an edit to a protected
-file, or something only the Owner can check), **add it to [TODO.md](TODO.md) straight away**, with
+file, or something only the Owner can check), add it to the Owner's local decision to-do list straight away, with
 the options, your recommendation and where the outcome will land. Then carry on with any work
 that does not depend on it. If you are blocked on the answer, stop and ask. Never decide it
 silently. Tick the item only after you have seen the outcome applied in the file it lands in.
-Re-read TODO.md before editing it, because the Owner edits it too.
