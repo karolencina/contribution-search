@@ -61,6 +61,18 @@ describe("initial load", () => {
     expect(announced).toBeDefined();
   });
 
+  test("shows a spinner with the loading text, and removes it when the results arrive", async () => {
+    render(<Page />);
+
+    expect(screen.getByRole("status").querySelector("svg")).not.toBeNull();
+
+    await act(async () => {
+      api.respond(0, pageOneOfThree);
+    });
+
+    expect(screen.getByRole("status").querySelector("svg")).toBeNull();
+  });
+
   test("shows the items in the API's order and the total from the response", async () => {
     render(<Page />);
 

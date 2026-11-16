@@ -77,6 +77,19 @@ describe("paging", () => {
     expect(items()[0]).toHaveTextContent("Quarterly REPORT automation");
   });
 
+  test("shows the spinner with the loading text only if a page is slow", async () => {
+    await loadFirstPage(23);
+
+    clickButton("Next page");
+    expect(screen.getByRole("status").querySelector("svg")).toBeNull();
+
+    await wait(200);
+    expect(screen.getByRole("status").querySelector("svg")).not.toBeNull();
+
+    await settle(() => api.respond(1, response([quarterlyReport], 23, 2)));
+    expect(screen.getByRole("status").querySelector("svg")).toBeNull();
+  });
+
   test("disables Previous on the first page and Next on the last", async () => {
     await loadFirstPage(23);
 
