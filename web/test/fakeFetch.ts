@@ -5,7 +5,6 @@ export type FakeFetch = {
   respond: (index: number, body: unknown) => void;
   fail: (index: number, status: number) => void;
   networkError: (index: number) => void;
-  abortError: (index: number) => void;
 };
 
 type Pending = {
@@ -32,7 +31,5 @@ export function fakeFetch(): FakeFetch {
       pending[index].resolve(new Response("{}", { status })),
     networkError: (index) =>
       pending[index].reject(new TypeError("Failed to fetch")),
-    abortError: (index) =>
-      pending[index].reject(new DOMException("Aborted", "AbortError")),
   };
 }
