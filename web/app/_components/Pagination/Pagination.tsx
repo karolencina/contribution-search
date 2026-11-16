@@ -32,8 +32,8 @@ function PaginationNext(props: StepProps) {
   return <PaginationStep {...props} direction="right" />;
 }
 
-function PaginationStatus(props: Native<"span">) {
-  return <span {...props} className={styles.status} />;
+function PaginationStatus(props: Omit<Native<"span">, "aria-live">) {
+  return <span {...props} aria-live="polite" className={styles.status} />;
 }
 
 export const Pagination = {

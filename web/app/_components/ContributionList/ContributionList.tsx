@@ -26,7 +26,9 @@ export function ContributionList({ items, isLoading }: ContributionListProps) {
         const start = new Date(item.startTime);
         return (
           <ContributionCard.Root key={item.id}>
-            <ContributionCard.Title>{item.title}</ContributionCard.Title>
+            <ContributionCard.Title title={item.title}>
+              {item.title}
+            </ContributionCard.Title>
             <ContributionCard.Field label="Owner">
               <span className={styles.owner}>
                 <Avatar name={item.owner} />

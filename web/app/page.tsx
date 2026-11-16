@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { ContributionList } from "./_components/ContributionList/ContributionList";
-import { ChevronIcon } from "./_components/Icon/Icon";
+import { Pagination } from "./_components/Pagination/Pagination";
 import { SearchField } from "./_components/SearchField/SearchField";
 import { PAGE_SIZE, type Search, useContributions } from "./useContributions";
 
@@ -78,32 +78,24 @@ export default function Page() {
           isLoading={status === "loading"}
         />
       )}
-      {totalPages > 1 && (
-        <nav aria-label="Pages">
-          <button
-            type="button"
+      {(totalPages > 1 || search.page > 1) && (
+        <Pagination.Root aria-label="Pages">
+          <Pagination.Previous
             disabled={search.page === 1}
-            aria-label="Previous page"
             onClick={() =>
               setSearch((current) => ({ ...current, page: current.page - 1 }))
             }
-          >
-            <ChevronIcon direction="left" />
-          </button>
-          <span>
+          />
+          <Pagination.Status>
             {search.page} of {totalPages}
-          </span>
-          <button
-            type="button"
+          </Pagination.Status>
+          <Pagination.Next
             disabled={search.page >= totalPages}
-            aria-label="Next page"
             onClick={() =>
               setSearch((current) => ({ ...current, page: current.page + 1 }))
             }
-          >
-            <ChevronIcon direction="right" />
-          </button>
-        </nav>
+          />
+        </Pagination.Root>
       )}
     </main>
   );

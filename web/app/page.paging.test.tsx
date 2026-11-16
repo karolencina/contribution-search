@@ -96,6 +96,58 @@ describe("paging", () => {
     expect(screen.getByRole("button", { name: "Next page" })).toBeDisabled();
   });
 
+  test("groups the page controls in a navigation named Pages", async () => {
+    await loadFirstPage(23);
+
+    expect(
+      screen.getByRole("navigation", { name: "Pages" }),
+    ).toBeInTheDocument();
+  });
+
+  test("Previous asks for the page before and shows it", async () => {
+    await loadFirstPage(23);
+    clickButton("Next page");
+    await settle(() => api.respond(1, response([quarterlyReport], 23, 2)));
+
+    clickButton("Previous page");
+
+    expect(api.calls).toHaveLength(3);
+    expect(api.calls[2].searchParams.get("page")).toBe("1");
+
+    await settle(() => api.respond(2, response([reportingApi], 23, 1)));
+    expect(items()[0]).toHaveTextContent("Reporting API");
+    expect(screen.getByText("1 of 3")).toBeInTheDocument();
+  });
+
+  test("keeps Previous available when a page past the end comes back empty", async () => {
+    await loadFirstPage(23);
+    typeText("x");
+    await wait(300);
+    clickButton("Next page");
+    expect(api.calls[2].searchParams.get("q")).toBe("x");
+    expect(api.calls[2].searchParams.get("page")).toBe("2");
+
+    await settle(() => api.respond(2, response([], 5, 2)));
+
+    expect(screen.getByRole("button", { name: "Previous page" })).toBeEnabled();
+
+    clickButton("Previous page");
+    expect(api.calls[3].searchParams.get("q")).toBe("x");
+    expect(api.calls[3].searchParams.get("page")).toBe("1");
+  });
+
+  test("keeps Previous available when a later page fails to load", async () => {
+    await loadFirstPage(23);
+    clickButton("Next page");
+    await settle(() => api.fail(1, 500));
+
+    expect(screen.getByRole("alert")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Previous page" })).toBeEnabled();
+
+    clickButton("Previous page");
+    expect(api.calls[2].searchParams.get("page")).toBe("1");
+  });
+
   test("counts a total that fills its pages exactly as that many pages", async () => {
     await loadFirstPage(20);
 

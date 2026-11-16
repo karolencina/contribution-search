@@ -19,6 +19,18 @@ describe("Avatar", () => {
     expect(screen.getByText("AL")).toBeInTheDocument();
   });
 
+  test("reads the initials past punctuation and extra spaces", () => {
+    render(
+      <>
+        <Avatar name="J. Smith" />
+        <Avatar name="  anna   maria  lopez " />
+      </>,
+    );
+
+    expect(screen.getByText("JS")).toBeInTheDocument();
+    expect(screen.getByText("AL")).toBeInTheDocument();
+  });
+
   test("shows capital letters, accents included", () => {
     render(<Avatar name="élodie martin" />);
     expect(screen.getByText("ÉM")).toBeInTheDocument();

@@ -1,11 +1,5 @@
-import type { ComponentProps } from "react";
-
+import type { Native } from "../native";
 import styles from "./ContributionCard.module.css";
-
-type Native<Tag extends "li" | "h2" | "div"> = Omit<
-  ComponentProps<Tag>,
-  "className"
->;
 
 function ContributionCardRoot(props: Native<"li">) {
   return <li {...props} className={styles.card} />;

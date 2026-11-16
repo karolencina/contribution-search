@@ -60,4 +60,10 @@ describe("Pagination", () => {
 
     expect(screen.getByText("2 of 5")).toBeInTheDocument();
   });
+
+  test("announces its text politely to screen readers when it changes", () => {
+    render(<Pagination.Status>2 of 5</Pagination.Status>);
+
+    expect(screen.getByText("2 of 5")).toHaveAttribute("aria-live", "polite");
+  });
 });

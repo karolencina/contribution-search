@@ -69,18 +69,26 @@ describe("search", () => {
     expect(rows[0]).toHaveTextContent("Reporting API");
   });
 
-  test.each(["a+b", "R&D", "C#", "100%", "[EU]", ".", " api", "%2B", "50%25"])(
-    "sends %j to the API exactly as typed",
-    async (text) => {
-      render(<Page />);
+  test.each([
+    "a+b",
+    "R&D",
+    "C#",
+    "100%",
+    "[EU]",
+    ".",
+    " api",
+    "api ",
+    "%2B",
+    "50%25",
+  ])("sends %j to the API exactly as typed", async (text) => {
+    render(<Page />);
 
-      type(text);
-      await wait(300);
+    type(text);
+    await wait(300);
 
-      expect(api.calls).toHaveLength(2);
-      expect(api.calls[1].searchParams.get("q")).toBe(text);
-    },
-  );
+    expect(api.calls).toHaveLength(2);
+    expect(api.calls[1].searchParams.get("q")).toBe(text);
+  });
 
   test("clearing the box searches again with no filter, from page 1", async () => {
     render(<Page />);

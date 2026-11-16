@@ -32,6 +32,6 @@
 
 .step:disabled {
   background: var(--surface);
-  color: #9a9da4;
+  color: var(--text-disabled);
   cursor: not-allowed;
 }
