@@ -1,0 +1,37 @@
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.status {
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+}
+
+.step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--text);
+  color: var(--bg);
+  font: inherit;
+  cursor: pointer;
+}
+
+.step:hover:not(:disabled) {
+  background: var(--ink-hover);
+}
+
+.step:disabled {
+  background: var(--surface);
+  color: #9a9da4;
+  cursor: not-allowed;
+}
