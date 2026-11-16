@@ -7,6 +7,16 @@ import { PAGE_SIZE, type Search, useContributions } from "./useContributions";
 const DEBOUNCE_MS = 300;
 const SLOW_MS = 200;
 
+const startTimeFormat = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+  timeZone: "UTC",
+});
+
 export default function Page() {
   const [text, setText] = useState("");
   const [search, setSearch] = useState<Search>({ query: "", page: 1 });
@@ -61,14 +71,22 @@ export default function Page() {
       </label>
       <p role="status">{message}</p>
       {status === "error" && (
-        <p role="alert">Could not load contributions. Try searching again.</p>
+        <p role="alert">
+          <strong>Error:</strong> Could not load contributions. Try searching
+          again.
+        </p>
       )}
       {result !== null && result.items.length > 0 && (
         <ul aria-busy={status === "loading"}>
           {result.items.map((item) => (
             <li key={item.id}>
-              {item.title} {item.owner}{" "}
-              <time dateTime={item.startTime}>{item.startTime}</time>
+              <span className="title">{item.title}</span>{" "}
+              <span className="meta">
+                <span>{item.owner}</span>{" "}
+                <time dateTime={item.startTime}>
+                  {startTimeFormat.format(new Date(item.startTime))} UTC
+                </time>
+              </span>
             </li>
           ))}
         </ul>
