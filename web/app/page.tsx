@@ -21,7 +21,6 @@ const timeFormat = new Intl.DateTimeFormat("en-GB", {
   timeZone: "UTC",
 });
 
-// The first letter of the first and last word of a name: "Elena Petrova" gives "EP".
 function initials(name: string): string {
   const words = name.split(/\s+/).filter(Boolean);
   if (words.length === 0) {
