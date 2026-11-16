@@ -1,15 +1,21 @@
 import { useEffect, useRef, useState } from "react";
 
 const API_URL = "http://127.0.0.1:8000";
+export const PAGE_SIZE = 10;
 
 type Result = {
   items: { id: number; title: string; owner: string; startTime: string }[];
   total: number;
 };
 
-type Settled = { query: string; result: Result | null; failed: boolean };
+type Settled = {
+  query: string;
+  page: number;
+  result: Result | null;
+  failed: boolean;
+};
 
-export function useContributions(query: string) {
+export function useContributions(query: string, page: number) {
   const [settled, setSettled] = useState<Settled | null>(null);
   const latestRequest = useRef(0);
 
@@ -19,7 +25,10 @@ export function useContributions(query: string) {
     const isLatest = () => requestId === latestRequest.current;
     const controller = new AbortController();
 
-    const params = new URLSearchParams({ page: "1", pageSize: "10" });
+    const params = new URLSearchParams({
+      page: String(page),
+      pageSize: String(PAGE_SIZE),
+    });
     if (query !== "") {
       params.set("q", query);
     }
@@ -33,20 +42,20 @@ export function useContributions(query: string) {
       })
       .then((result) => {
         if (isLatest()) {
-          setSettled({ query, result, failed: false });
+          setSettled({ query, page, result, failed: false });
         }
       })
       .catch(() => {
         if (isLatest()) {
-          setSettled({ query, result: null, failed: true });
+          setSettled({ query, page, result: null, failed: true });
         }
       });
 
     return () => controller.abort();
-  }, [query]);
+  }, [query, page]);
 
   let status: "loading" | "ready" | "error" = "loading";
-  if (settled !== null && settled.query === query) {
+  if (settled !== null && settled.query === query && settled.page === page) {
     status = settled.failed ? "error" : "ready";
   }
   return { status, result: settled?.result ?? null };

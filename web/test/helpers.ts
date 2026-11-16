@@ -22,10 +22,10 @@ export const euDataExport = {
   startTime: "2024-03-05T09:00:00Z",
 };
 
-export const response = (items: unknown[], total: number) => ({
+export const response = (items: unknown[], total: number, page = 1) => ({
   items,
   total,
-  page: 1,
+  page,
   pageSize: 10,
 });
 
@@ -34,6 +34,9 @@ export const typeText = (text: string) =>
     screen.getByRole("searchbox", { name: "Search by title or owner" }),
     { target: { value: text } },
   );
+
+export const clickButton = (name: string) =>
+  fireEvent.click(screen.getByRole("button", { name }));
 
 export const wait = (ms: number) =>
   act(async () => {
