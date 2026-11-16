@@ -190,46 +190,6 @@ h1 {
   line-height: 1.6;
 }
 
-.search-field {
-  position: relative;
-}
-
-.search-field svg {
-  position: absolute;
-  top: 50%;
-  left: 1.125rem;
-  transform: translateY(-50%);
-  color: var(--text-secondary);
-  pointer-events: none;
-}
-
-input {
-  display: block;
-  width: 100%;
-  height: 3.25rem;
-  padding: 0 1.25rem 0 3.25rem;
-  appearance: none;
-  border: 0;
-  border-radius: 1rem;
-  background: var(--surface);
-  color: var(--text);
-  font: inherit;
-  font-size: 1rem;
-  letter-spacing: inherit;
-}
-
-input::placeholder {
-  color: var(--text-secondary);
-  opacity: 1;
-}
-
-input:focus-visible {
-  outline: 2px solid transparent;
-  outline-offset: 0;
-  background: var(--bg);
-  box-shadow: inset 0 0 0 2px var(--blue-text);
-}
-
 :focus-visible {
   outline: 3px solid var(--red);
   outline-offset: 2px;
@@ -345,7 +305,7 @@ nav span {
   font-size: 0.9375rem;
 }
 
-button {
+nav button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -360,11 +320,11 @@ button {
   cursor: pointer;
 }
 
-button:hover:not(:disabled) {
+nav button:hover:not(:disabled) {
   background: var(--ink-hover);
 }
 
-button:disabled {
+nav button:disabled {
   background: var(--surface);
   color: #9a9da4;
   cursor: not-allowed;

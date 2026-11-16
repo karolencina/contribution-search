@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 
 import { Avatar } from "./_components/Avatar/Avatar";
-import { ChevronIcon, SearchIcon } from "./_components/Icon/Icon";
+import { ChevronIcon } from "./_components/Icon/Icon";
+import { SearchField } from "./_components/SearchField/SearchField";
 import { PAGE_SIZE, type Search, useContributions } from "./useContributions";
 
 const DEBOUNCE_MS = 300;
@@ -72,16 +73,11 @@ export default function Page() {
           Browse the work delivered across teams, and search it by title or
           owner.
         </p>
-        <div className="search-field">
-          <SearchIcon />
-          <input
-            type="search"
-            aria-label="Search by title or owner"
-            placeholder="Search by title or owner"
-            value={text}
-            onChange={(event) => setText(event.target.value)}
-          />
-        </div>
+        <SearchField
+          label="Search by title or owner"
+          value={text}
+          onChange={setText}
+        />
       </header>
       <p role="status">{message}</p>
       {status === "error" && (

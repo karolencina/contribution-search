@@ -26,6 +26,14 @@ export function ChevronIcon({ direction }: { direction: "left" | "right" }) {
   );
 }
 
+export function CloseIcon() {
+  return (
+    <Icon>
+      <path d="M6 6l12 12M18 6L6 18" />
+    </Icon>
+  );
+}
+
 export function SearchIcon() {
   return (
     <Icon>
