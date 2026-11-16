@@ -1,0 +1,28 @@
+.list {
+  display: grid;
+  gap: 0.625rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list[aria-busy="true"] {
+  opacity: 0.6;
+}
+
+.owner {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  color: var(--text);
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.time {
+  white-space: nowrap;
+}
+
+.date {
+  font-weight: 600;
+}

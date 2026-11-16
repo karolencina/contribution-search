@@ -1,9 +1,19 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, test, vi } from "vitest";
 
 import { SearchField } from "./SearchField";
 
 describe("SearchField", () => {
+  test("is a search landmark around the search box", () => {
+    render(<SearchField label="Find a thing" value="" onChange={vi.fn()} />);
+
+    expect(
+      within(screen.getByRole("search")).getByRole("searchbox", {
+        name: "Find a thing",
+      }),
+    ).toBeInTheDocument();
+  });
+
   test("names the search box with its label", () => {
     render(<SearchField label="Find a thing" value="" onChange={vi.fn()} />);
 

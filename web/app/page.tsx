@@ -2,27 +2,13 @@
 
 import { useEffect, useState } from "react";
 
-import { Avatar } from "./_components/Avatar/Avatar";
+import { ContributionList } from "./_components/ContributionList/ContributionList";
 import { ChevronIcon } from "./_components/Icon/Icon";
 import { SearchField } from "./_components/SearchField/SearchField";
 import { PAGE_SIZE, type Search, useContributions } from "./useContributions";
 
 const DEBOUNCE_MS = 300;
 const SLOW_MS = 200;
-
-const dateFormat = new Intl.DateTimeFormat("en-GB", {
-  day: "numeric",
-  month: "short",
-  year: "numeric",
-  timeZone: "UTC",
-});
-
-const timeFormat = new Intl.DateTimeFormat("en-GB", {
-  hour: "2-digit",
-  minute: "2-digit",
-  hourCycle: "h23",
-  timeZone: "UTC",
-});
 
 export default function Page() {
   const [text, setText] = useState("");
@@ -87,30 +73,10 @@ export default function Page() {
         </p>
       )}
       {result !== null && result.items.length > 0 && (
-        <ul aria-busy={status === "loading"}>
-          {result.items.map((item) => {
-            const start = new Date(item.startTime);
-            return (
-              <li key={item.id}>
-                <span className="title">{item.title}</span>
-                <div className="field">
-                  <span className="label">Owner</span>
-                  <span className="owner">
-                    <Avatar name={item.owner} />
-                    {item.owner}
-                  </span>
-                </div>
-                <div className="field">
-                  <span className="label">Starts</span>
-                  <time dateTime={item.startTime}>
-                    <span className="date">{dateFormat.format(start)}</span>{" "}
-                    {timeFormat.format(start)}
-                  </time>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+        <ContributionList
+          items={result.items}
+          isLoading={status === "loading"}
+        />
       )}
       {totalPages > 1 && (
         <nav aria-label="Pages">

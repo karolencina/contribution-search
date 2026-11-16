@@ -1,3 +1,5 @@
+"use client";
+
 import { useRef } from "react";
 
 import { CloseIcon, SearchIcon } from "../Icon/Icon";
@@ -13,7 +15,7 @@ export function SearchField({ label, value, onChange }: SearchFieldProps) {
   const input = useRef<HTMLInputElement>(null);
 
   return (
-    <div className={styles.search}>
+    <div className={styles.search} role="search">
       <SearchIcon />
       <input
         ref={input}
