@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Contribution Search",
+  title: "Contributions",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

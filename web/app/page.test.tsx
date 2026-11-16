@@ -13,6 +13,6 @@ test("the home page has a heading", () => {
   render(<Page />);
 
   expect(
-    screen.getByRole("heading", { level: 1, name: "Contribution Search" }),
+    screen.getByRole("heading", { level: 1, name: "Contributions" }),
   ).toBeInTheDocument();
 });
