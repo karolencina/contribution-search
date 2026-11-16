@@ -9,15 +9,16 @@ Next.js frontend (`web/`).
 
 ## Status
 
-| Part                                                          | State         |
-| ------------------------------------------------------------- | ------------- |
-| Backend: search by title or owner (case-insensitive, literal) | Built, tested |
-| Backend: sorting (`startTime`, then `id`) and UTC output      | Built, tested |
-| Backend: pagination, `page` / `pageSize` validation           | Built, tested |
-| Backend: loading `api/contributions.json`                     | Built, tested |
-| Frontend: first load, search box, debounce                    | Built, tested |
-| Frontend: stale responses, loading and error states           | Built, tested |
-| Frontend: paging and the empty state                          | Built, tested |
+| Part                                                          | State                         |
+| ------------------------------------------------------------- | ----------------------------- |
+| Backend: search by title or owner (case-insensitive, literal) | Built, tested                 |
+| Backend: sorting (`startTime`, then `id`) and UTC output      | Built, tested                 |
+| Backend: pagination, `page` / `pageSize` validation           | Built, tested                 |
+| Backend: loading `api/contributions.json`                     | Built, tested                 |
+| Frontend: first load, search box, debounce                    | Built, tested                 |
+| Frontend: stale responses, loading and error states           | Built, tested                 |
+| Frontend: paging and the empty state                          | Built, tested                 |
+| Frontend: layout, colours, readable UTC dates                 | Built, checked in Chrome only |
 
 ## Requirements
 
