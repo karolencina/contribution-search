@@ -8,14 +8,11 @@ type Result = {
   total: number;
 };
 
-type Settled = {
-  query: string;
-  page: number;
-  result: Result | null;
-  failed: boolean;
-};
+export type Search = { query: string; page: number };
 
-export function useContributions(query: string, page: number) {
+type Settled = { search: Search; result: Result | null };
+
+export function useContributions(search: Search) {
   const [settled, setSettled] = useState<Settled | null>(null);
   const latestRequest = useRef(0);
 
@@ -23,40 +20,37 @@ export function useContributions(query: string, page: number) {
     latestRequest.current += 1;
     const requestId = latestRequest.current;
     const isLatest = () => requestId === latestRequest.current;
-    const controller = new AbortController();
 
     const params = new URLSearchParams({
-      page: String(page),
+      page: String(search.page),
       pageSize: String(PAGE_SIZE),
     });
-    if (query !== "") {
-      params.set("q", query);
+    if (search.query !== "") {
+      params.set("q", search.query);
     }
 
-    fetch(`${API_URL}/contributions?${params}`, { signal: controller.signal })
+    fetch(`${API_URL}/contributions?${params}`)
       .then((response) => {
         if (!response.ok) {
-          throw new Error(`The API answered ${response.status}`);
+          throw new Error(`HTTP ${response.status}`);
         }
         return response.json() as Promise<Result>;
       })
       .then((result) => {
         if (isLatest()) {
-          setSettled({ query, page, result, failed: false });
+          setSettled({ search, result });
         }
       })
       .catch(() => {
         if (isLatest()) {
-          setSettled({ query, page, result: null, failed: true });
+          setSettled({ search, result: null });
         }
       });
-
-    return () => controller.abort();
-  }, [query, page]);
+  }, [search]);
 
   let status: "loading" | "ready" | "error" = "loading";
-  if (settled !== null && settled.query === query && settled.page === page) {
-    status = settled.failed ? "error" : "ready";
+  if (settled !== null && settled.search === search) {
+    status = settled.result === null ? "error" : "ready";
   }
   return { status, result: settled?.result ?? null };
 }

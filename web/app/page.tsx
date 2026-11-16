@@ -2,52 +2,50 @@
 
 import { useEffect, useState } from "react";
 
-import { PAGE_SIZE, useContributions } from "./useContributions";
+import { PAGE_SIZE, type Search, useContributions } from "./useContributions";
 
 const DEBOUNCE_MS = 300;
 const SLOW_MS = 200;
 
 export default function Page() {
   const [text, setText] = useState("");
-  const [query, setQuery] = useState("");
-  const [page, setPage] = useState(1);
-  const { status, result } = useContributions(query, page);
+  const [search, setSearch] = useState<Search>({ query: "", page: 1 });
+  const { status, result } = useContributions(search);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setQuery(text);
-      setPage(1);
+      setSearch((current) =>
+        current.query === text ? current : { query: text, page: 1 },
+      );
     }, DEBOUNCE_MS);
     return () => clearTimeout(timer);
   }, [text]);
 
-  const requestKey = JSON.stringify([query, page]);
-  const [slowRequest, setSlowRequest] = useState("");
+  const [slowSearch, setSlowSearch] = useState<Search | null>(null);
 
   useEffect(() => {
     if (status !== "loading") {
       return undefined;
     }
-    const timer = setTimeout(() => setSlowRequest(requestKey), SLOW_MS);
+    const timer = setTimeout(() => setSlowSearch(search), SLOW_MS);
     return () => clearTimeout(timer);
-  }, [status, requestKey]);
+  }, [status, search]);
 
   const total = result === null ? 0 : result.total;
   const totalPages = Math.ceil(total / PAGE_SIZE);
+  const count = `${total} ${total === 1 ? "contribution" : "contributions"}`;
 
   let message = "";
-  if (status === "loading" && (total === 0 || slowRequest === requestKey)) {
+  if (status === "loading" && (total === 0 || slowSearch === search)) {
     message =
-      total > 0
-        ? `${total} contributions. Loading contributions`
-        : "Loading contributions";
+      total > 0 ? `${count}. Loading contributions` : "Loading contributions";
   } else if (result !== null && total === 0) {
     message =
-      query === ""
+      search.query === ""
         ? "No contributions found"
-        : `No contributions match "${query}"`;
+        : `No contributions match "${search.query}"`;
   } else if (result !== null) {
-    message = `${total} contributions`;
+    message = count;
   }
 
   return (
@@ -79,20 +77,24 @@ export default function Page() {
         <nav aria-label="Pages">
           <button
             type="button"
-            disabled={page === 1}
+            disabled={search.page === 1}
             aria-label="Previous page"
-            onClick={() => setPage((current) => current - 1)}
+            onClick={() =>
+              setSearch((current) => ({ ...current, page: current.page - 1 }))
+            }
           >
             Previous
           </button>
           <span>
-            {page} of {totalPages}
+            {search.page} of {totalPages}
           </span>
           <button
             type="button"
-            disabled={page === totalPages}
+            disabled={search.page >= totalPages}
             aria-label="Next page"
-            onClick={() => setPage((current) => current + 1)}
+            onClick={() =>
+              setSearch((current) => ({ ...current, page: current.page + 1 }))
+            }
           >
             Next
           </button>

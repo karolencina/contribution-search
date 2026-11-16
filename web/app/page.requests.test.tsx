@@ -129,24 +129,6 @@ describe("requests", () => {
     expect(items()).toHaveLength(1);
   });
 
-  test("an aborted request does not show an error, even for the same text as the current search", async () => {
-    render(<Page />);
-    typeText("a");
-    await wait(300);
-    typeText("ab");
-    await wait(300);
-    typeText("a");
-    await wait(300);
-    expect(api.calls).toHaveLength(4);
-
-    await settle(() => api.abortError(1));
-    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
-
-    await settle(() => api.respond(3, response([quarterlyReport], 1)));
-    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
-    expect(items()).toHaveLength(1);
-  });
-
   test("keeps the old results, marked busy, while a later search loads", async () => {
     render(<Page />);
     await settle(() => api.respond(0, response([reportingApi], 23)));
