@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { ContributionList } from "./_components/ContributionList/ContributionList";
 import { Pagination } from "./_components/Pagination/Pagination";
 import { SearchField } from "./_components/SearchField/SearchField";
+import { Spinner } from "./_components/Spinner/Spinner";
 import { PAGE_SIZE, type Search, useContributions } from "./useContributions";
 
 const DEBOUNCE_MS = 300;
@@ -38,8 +39,11 @@ export default function Page() {
   const totalPages = Math.ceil(total / PAGE_SIZE);
   const count = `${total} ${total === 1 ? "contribution" : "contributions"}`;
 
+  const showLoading =
+    status === "loading" && (total === 0 || slowSearch === search);
+
   let message = "";
-  if (status === "loading" && (total === 0 || slowSearch === search)) {
+  if (showLoading) {
     message =
       total > 0 ? `${count}. Loading contributions` : "Loading contributions";
   } else if (result !== null && total === 0) {
@@ -65,7 +69,10 @@ export default function Page() {
           onChange={setText}
         />
       </header>
-      <p role="status">{message}</p>
+      <p role="status">
+        {showLoading && <Spinner />}
+        {message}
+      </p>
       {status === "error" && (
         <p role="alert">
           <strong>Error:</strong> Could not load contributions. Try searching
