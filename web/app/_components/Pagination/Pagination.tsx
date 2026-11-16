@@ -1,44 +1,42 @@
 import { ChevronIcon } from "../Icon/Icon";
-import type { Native } from "../native";
 import styles from "./Pagination.module.css";
 
-type StepProps = Omit<Native<"button">, "children" | "type" | "aria-label">;
+type PaginationProps = {
+  page: number;
+  totalPages: number;
+  onPrevious: () => void;
+  onNext: () => void;
+};
 
-function PaginationRoot(props: Native<"nav">) {
-  return <nav {...props} className={styles.pagination} />;
-}
-
-function PaginationStep({
-  direction,
-  ...props
-}: StepProps & { direction: "left" | "right" }) {
+export function Pagination({
+  page,
+  totalPages,
+  onPrevious,
+  onNext,
+}: PaginationProps) {
   return (
-    <button
-      {...props}
-      type="button"
-      aria-label={direction === "left" ? "Previous page" : "Next page"}
-      className={styles.step}
-    >
-      <ChevronIcon direction={direction} />
-    </button>
+    <nav aria-label="Pages" className={styles.pagination}>
+      <button
+        type="button"
+        aria-label="Previous page"
+        className={styles.step}
+        disabled={page === 1}
+        onClick={onPrevious}
+      >
+        <ChevronIcon direction="left" />
+      </button>
+      <span aria-live="polite" className={styles.status}>
+        {page} of {totalPages}
+      </span>
+      <button
+        type="button"
+        aria-label="Next page"
+        className={styles.step}
+        disabled={page >= totalPages}
+        onClick={onNext}
+      >
+        <ChevronIcon direction="right" />
+      </button>
+    </nav>
   );
 }
-
-function PaginationPrevious(props: StepProps) {
-  return <PaginationStep {...props} direction="left" />;
-}
-
-function PaginationNext(props: StepProps) {
-  return <PaginationStep {...props} direction="right" />;
-}
-
-function PaginationStatus(props: Omit<Native<"span">, "aria-live">) {
-  return <span {...props} aria-live="polite" className={styles.status} />;
-}
-
-export const Pagination = {
-  Root: PaginationRoot,
-  Previous: PaginationPrevious,
-  Status: PaginationStatus,
-  Next: PaginationNext,
-};

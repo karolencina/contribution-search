@@ -1,0 +1,122 @@
+.page {
+  max-width: 46rem;
+  margin: 0 auto;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 1rem 0;
+}
+
+.header::before {
+  content: "";
+  position: absolute;
+  inset: 0 -3rem -2.5rem;
+  z-index: -1;
+  pointer-events: none;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  -webkit-mask-image:
+    linear-gradient(to bottom, #000 calc(100% - 2.5rem), transparent),
+    linear-gradient(
+      to right,
+      transparent,
+      #000 3rem,
+      #000 calc(100% - 3rem),
+      transparent
+    );
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to bottom, #000 calc(100% - 2.5rem), transparent),
+    linear-gradient(
+      to right,
+      transparent,
+      #000 3rem,
+      #000 calc(100% - 3rem),
+      transparent
+    );
+  mask-composite: intersect;
+}
+
+@media (max-height: 40rem) {
+  .header {
+    position: static;
+  }
+
+  .header::before {
+    display: none;
+  }
+}
+
+@keyframes title-shrink {
+  to {
+    margin-bottom: 0.75rem;
+    font-size: 1.5rem;
+  }
+}
+
+@keyframes intro-hide {
+  to {
+    max-height: 0;
+    margin-bottom: 0;
+    opacity: 0;
+  }
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) and (min-height: 40.01rem) {
+    .title,
+    .intro {
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root);
+      animation-range: 0 8rem;
+    }
+
+    .title {
+      animation-name: title-shrink;
+    }
+
+    .intro {
+      animation-name: intro-hide;
+    }
+  }
+}
+
+.title {
+  margin: 0 0 1rem;
+  font-size: clamp(2.25rem, 9vw, 3.5rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.045em;
+}
+
+.intro {
+  max-width: 34rem;
+  max-height: 8rem;
+  margin: 0 0 2rem;
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 1.5rem;
+  margin: 1.75rem 0 1.25rem;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+}
+
+.alert {
+  margin: 0 0 1.25rem;
+  padding: 1rem 1.25rem;
+  border-left: 0.375rem solid var(--red);
+  border-radius: 1rem;
+  background: var(--surface);
+}

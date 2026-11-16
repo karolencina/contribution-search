@@ -6,6 +6,7 @@ import { ContributionList } from "./_components/ContributionList/ContributionLis
 import { Pagination } from "./_components/Pagination/Pagination";
 import { SearchField } from "./_components/SearchField/SearchField";
 import { Spinner } from "./_components/Spinner/Spinner";
+import styles from "./page.module.css";
 import { PAGE_SIZE, type Search, useContributions } from "./useContributions";
 
 const DEBOUNCE_MS = 300;
@@ -56,10 +57,10 @@ export default function Page() {
   }
 
   return (
-    <main>
-      <header>
-        <h1>Contributions</h1>
-        <p className="intro">
+    <main className={styles.page}>
+      <header className={styles.header}>
+        <h1 className={styles.title}>Contributions</h1>
+        <p className={styles.intro}>
           Browse the work delivered across teams, and search it by title or
           owner.
         </p>
@@ -69,14 +70,14 @@ export default function Page() {
           onChange={setText}
         />
       </header>
-      <p role="status">
+      <p role="status" className={styles.status}>
         {showLoading && <Spinner />}
         {message}
       </p>
       {status === "error" && (
-        <p role="alert">
-          <strong>Error:</strong> Could not load contributions. Try searching
-          again.
+        <p role="alert" className={styles.alert}>
+          <strong>Error:</strong> Could not load contributions. Change the
+          search to try again.
         </p>
       )}
       {result !== null && result.items.length > 0 && (
@@ -86,23 +87,16 @@ export default function Page() {
         />
       )}
       {(totalPages > 1 || search.page > 1) && (
-        <Pagination.Root aria-label="Pages">
-          <Pagination.Previous
-            disabled={search.page === 1}
-            onClick={() =>
-              setSearch((current) => ({ ...current, page: current.page - 1 }))
-            }
-          />
-          <Pagination.Status>
-            {search.page} of {totalPages}
-          </Pagination.Status>
-          <Pagination.Next
-            disabled={search.page >= totalPages}
-            onClick={() =>
-              setSearch((current) => ({ ...current, page: current.page + 1 }))
-            }
-          />
-        </Pagination.Root>
+        <Pagination
+          page={search.page}
+          totalPages={totalPages}
+          onPrevious={() =>
+            setSearch((current) => ({ ...current, page: current.page - 1 }))
+          }
+          onNext={() =>
+            setSearch((current) => ({ ...current, page: current.page + 1 }))
+          }
+        />
       )}
     </main>
   );
