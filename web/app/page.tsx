@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 
 import { ContributionList } from "./_components/ContributionList/ContributionList";
 import { ChevronIcon } from "./_components/Icon/Icon";
@@ -9,6 +9,65 @@ import { PAGE_SIZE, type Search, useContributions } from "./useContributions";
 
 const DEBOUNCE_MS = 300;
 const SLOW_MS = 200;
+
+const dateFormat = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
+const timeFormat = new Intl.DateTimeFormat("en-GB", {
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23",
+  timeZone: "UTC",
+});
+
+function initials(name: string): string {
+  const words = name.split(/\s+/).filter(Boolean);
+  if (words.length === 0) {
+    return "";
+  }
+  const firstAndLast =
+    words.length === 1 ? [words[0]] : [words[0], words[words.length - 1]];
+  return firstAndLast.map((word) => Array.from(word)[0].toUpperCase()).join("");
+}
+
+function Icon({ children }: { children: ReactNode }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="24"
+      height="24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {children}
+    </svg>
+  );
+}
+
+function Chevron({ direction }: { direction: "left" | "right" }) {
+  return (
+    <Icon>
+      <path d={direction === "left" ? "M15 6l-6 6 6 6" : "M9 6l6 6-6 6"} />
+    </Icon>
+  );
+}
+
+function SearchIcon() {
+  return (
+    <Icon>
+      <circle cx="11" cy="11" r="6" />
+      <path d="M20 20l-4.5-4.5" />
+    </Icon>
+  );
+}
 
 export default function Page() {
   const [text, setText] = useState("");
