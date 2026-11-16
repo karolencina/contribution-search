@@ -3,10 +3,14 @@ import { useEffect, useRef, useState } from "react";
 const API_URL = "http://127.0.0.1:8000";
 export const PAGE_SIZE = 10;
 
-type Result = {
-  items: { id: number; title: string; owner: string; startTime: string }[];
-  total: number;
+export type Contribution = {
+  id: number;
+  title: string;
+  owner: string;
+  startTime: string;
 };
+
+type Result = { items: Contribution[]; total: number };
 
 export type Search = { query: string; page: number };
 

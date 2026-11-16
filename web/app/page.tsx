@@ -1,70 +1,14 @@
 "use client";
 
-import { type ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
+import { ContributionList } from "./_components/ContributionList/ContributionList";
+import { Pagination } from "./_components/Pagination/Pagination";
+import { SearchField } from "./_components/SearchField/SearchField";
 import { PAGE_SIZE, type Search, useContributions } from "./useContributions";
 
 const DEBOUNCE_MS = 300;
 const SLOW_MS = 200;
-
-const dateFormat = new Intl.DateTimeFormat("en-GB", {
-  day: "numeric",
-  month: "short",
-  year: "numeric",
-  timeZone: "UTC",
-});
-
-const timeFormat = new Intl.DateTimeFormat("en-GB", {
-  hour: "2-digit",
-  minute: "2-digit",
-  hourCycle: "h23",
-  timeZone: "UTC",
-});
-
-function initials(name: string): string {
-  const words = name.split(/\s+/).filter(Boolean);
-  if (words.length === 0) {
-    return "";
-  }
-  const firstAndLast =
-    words.length === 1 ? [words[0]] : [words[0], words[words.length - 1]];
-  return firstAndLast.map((word) => Array.from(word)[0].toUpperCase()).join("");
-}
-
-function Icon({ children }: { children: ReactNode }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width="24"
-      height="24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      {children}
-    </svg>
-  );
-}
-
-function Chevron({ direction }: { direction: "left" | "right" }) {
-  return (
-    <Icon>
-      <path d={direction === "left" ? "M15 6l-6 6 6 6" : "M9 6l6 6-6 6"} />
-    </Icon>
-  );
-}
-
-function SearchIcon() {
-  return (
-    <Icon>
-      <circle cx="11" cy="11" r="6" />
-      <path d="M20 20l-4.5-4.5" />
-    </Icon>
-  );
-}
 
 export default function Page() {
   const [text, setText] = useState("");
@@ -115,16 +59,11 @@ export default function Page() {
           Browse the work delivered across teams, and search it by title or
           owner.
         </p>
-        <div className="search-field">
-          <SearchIcon />
-          <input
-            type="search"
-            aria-label="Search by title or owner"
-            placeholder="Search by title or owner"
-            value={text}
-            onChange={(event) => setText(event.target.value)}
-          />
-        </div>
+        <SearchField
+          label="Search by title or owner"
+          value={text}
+          onChange={setText}
+        />
       </header>
       <p role="status">{message}</p>
       {status === "error" && (
@@ -134,62 +73,29 @@ export default function Page() {
         </p>
       )}
       {result !== null && result.items.length > 0 && (
-        <ul aria-busy={status === "loading"}>
-          {result.items.map((item) => {
-            const start = new Date(item.startTime);
-            const ownerInitials = initials(item.owner);
-            return (
-              <li key={item.id}>
-                <span className="title">{item.title}</span>
-                <div className="field">
-                  <span className="label">Owner</span>
-                  <span className="owner">
-                    {ownerInitials !== "" && (
-                      <span className="avatar" aria-hidden="true">
-                        {ownerInitials}
-                      </span>
-                    )}
-                    {item.owner}
-                  </span>
-                </div>
-                <div className="field">
-                  <span className="label">Starts</span>
-                  <time dateTime={item.startTime}>
-                    <span className="date">{dateFormat.format(start)}</span>{" "}
-                    {timeFormat.format(start)}
-                  </time>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+        <ContributionList
+          items={result.items}
+          isLoading={status === "loading"}
+        />
       )}
-      {totalPages > 1 && (
-        <nav aria-label="Pages">
-          <button
-            type="button"
+      {(totalPages > 1 || search.page > 1) && (
+        <Pagination.Root aria-label="Pages">
+          <Pagination.Previous
             disabled={search.page === 1}
-            aria-label="Previous page"
             onClick={() =>
               setSearch((current) => ({ ...current, page: current.page - 1 }))
             }
-          >
-            <Chevron direction="left" />
-          </button>
-          <span>
+          />
+          <Pagination.Status>
             {search.page} of {totalPages}
-          </span>
-          <button
-            type="button"
+          </Pagination.Status>
+          <Pagination.Next
             disabled={search.page >= totalPages}
-            aria-label="Next page"
             onClick={() =>
               setSearch((current) => ({ ...current, page: current.page + 1 }))
             }
-          >
-            <Chevron direction="right" />
-          </button>
-        </nav>
+          />
+        </Pagination.Root>
       )}
     </main>
   );
