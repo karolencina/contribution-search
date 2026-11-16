@@ -2,33 +2,16 @@ import { act, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 import { fakeFetch, type FakeFetch } from "../test/fakeFetch";
+import {
+  euDataExport,
+  quarterlyReport,
+  reportingApi,
+  response,
+} from "../test/helpers";
 import Page from "./page";
 
-const pageOneOfThree = {
-  items: [
-    {
-      id: 4,
-      title: "Quarterly REPORT automation",
-      owner: "Priya Patel",
-      startTime: "2024-02-14T14:00:00Z",
-    },
-    {
-      id: 1,
-      title: "Reporting API",
-      owner: "Sarah Jones",
-      startTime: "2024-01-10T10:30:00Z",
-    },
-    {
-      id: 5,
-      title: "Customer [EU] data export",
-      owner: "Tom Becker",
-      startTime: "2024-03-05T09:00:00Z",
-    },
-  ],
-  total: 23,
-  page: 1,
-  pageSize: 10,
-};
+const pageOneItems = [quarterlyReport, reportingApi, euDataExport];
+const pageOneOfThree = response(pageOneItems, 23);
 
 describe("initial load", () => {
   let api: FakeFetch;
@@ -82,7 +65,7 @@ describe("initial load", () => {
 
     const rows = within(screen.getByRole("list")).getAllByRole("listitem");
     expect(rows).toHaveLength(3);
-    pageOneOfThree.items.forEach((item, index) => {
+    pageOneItems.forEach((item, index) => {
       expect(rows[index]).toHaveTextContent(item.title);
       expect(rows[index]).toHaveTextContent(item.owner);
       expect(rows[index].querySelector("time")).toHaveAttribute(

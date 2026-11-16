@@ -1,36 +1,18 @@
-import { act, fireEvent, render, screen, within } from "@testing-library/react";
+import { act, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 import { fakeFetch, type FakeFetch } from "../test/fakeFetch";
+import {
+  euDataExport,
+  reportingApi,
+  response,
+  typeText,
+  wait,
+} from "../test/helpers";
 import Page from "./page";
-
-const reportingApi = {
-  id: 1,
-  title: "Reporting API",
-  owner: "Sarah Jones",
-  startTime: "2024-01-10T10:30:00Z",
-};
-
-const euDataExport = {
-  id: 5,
-  title: "Customer [EU] data export",
-  owner: "Tom Becker",
-  startTime: "2024-03-05T09:00:00Z",
-};
 
 describe("search", () => {
   let api: FakeFetch;
-
-  const type = (text: string) =>
-    fireEvent.change(
-      screen.getByRole("searchbox", { name: "Search by title or owner" }),
-      { target: { value: text } },
-    );
-
-  const wait = (ms: number) =>
-    act(async () => {
-      vi.advanceTimersByTime(ms);
-    });
 
   beforeEach(() => {
     vi.useFakeTimers();
@@ -45,9 +27,9 @@ describe("search", () => {
   test("waits for a pause in typing, then searches for the typed text from page 1", async () => {
     render(<Page />);
 
-    type("r");
+    typeText("r");
     await wait(200);
-    type("re");
+    typeText("re");
     await wait(200);
     expect(api.calls).toHaveLength(1);
 
@@ -57,12 +39,7 @@ describe("search", () => {
     expect(api.calls[1].searchParams.get("page")).toBe("1");
 
     await act(async () => {
-      api.respond(1, {
-        items: [reportingApi],
-        total: 1,
-        page: 1,
-        pageSize: 10,
-      });
+      api.respond(1, response([reportingApi], 1));
     });
     const rows = within(screen.getByRole("list")).getAllByRole("listitem");
     expect(rows).toHaveLength(1);
@@ -83,7 +60,7 @@ describe("search", () => {
   ])("sends %j to the API exactly as typed", async (text) => {
     render(<Page />);
 
-    type(text);
+    typeText(text);
     await wait(300);
 
     expect(api.calls).toHaveLength(2);
@@ -92,23 +69,18 @@ describe("search", () => {
 
   test("clearing the box searches again with no filter, from page 1", async () => {
     render(<Page />);
-    type("report");
+    typeText("report");
     await wait(300);
     expect(api.calls).toHaveLength(2);
 
-    type("");
+    typeText("");
     await wait(300);
     expect(api.calls).toHaveLength(3);
     expect(api.calls[2].searchParams.get("q") ?? "").toBe("");
     expect(api.calls[2].searchParams.get("page")).toBe("1");
 
     await act(async () => {
-      api.respond(2, {
-        items: [reportingApi, euDataExport],
-        total: 2,
-        page: 1,
-        pageSize: 10,
-      });
+      api.respond(2, response([reportingApi, euDataExport], 2));
     });
     const rows = within(screen.getByRole("list")).getAllByRole("listitem");
     expect(rows).toHaveLength(2);
